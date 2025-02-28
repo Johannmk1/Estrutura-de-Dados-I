@@ -17,6 +17,7 @@ uses crt;
 	function pertence_ordenado(v: vetor;t,n: integer): boolean;
 	function tem_raiz(a,b,c: real): boolean;  
 	function posicao_ordenado(v: vetor;t,n: integer): integer;
+	function Inverter_Palavras(F: string): String;
 	
 	procedure ler_inteiro(msg: string;n: integer);
 	procedure ler_real(msg: string;n: real);
@@ -173,6 +174,39 @@ Implementation
 				fim := meio - 1;
 		 end;
 		posicao_ordenado := posicao;
+	end;
+	
+	function Inverter_Palavras(F: string): String;
+	var	i, c: Integer;
+	    PalavraInvertida, FraseInvertida: String;
+	begin
+	  c := 0;
+	  FraseInvertida := '';
+	  F := F + ' ';
+	  
+	  for i := 1 to Length(F) do
+	  begin
+	  	if F[i] <> ' ' then
+	    begin
+	      c := c+1;
+	      PalavraInvertida := PalavraInvertida + F[i];
+	    end
+	    else
+	    begin
+	    	while c > 0 do
+	      begin
+	      	FraseInvertida := FraseInvertida + PalavraInvertida[c];
+	        c := c-1;
+	      end;
+	      FraseInvertida := FraseInvertida + ' ';
+	      PalavraInvertida := '';
+	  	end;
+	  end;
+	  
+	  if Length(FraseInvertida) > 0 then
+	  	Delete(FraseInvertida, Length(FraseInvertida), 1);
+	  
+	  Inverter_Palavras := FraseInvertida;
 	end;
 	
 //procedimentos		
