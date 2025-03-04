@@ -1,18 +1,29 @@
-program Exercicio1;
+program Exercicio2;
 
 uses Biblioteca;
 
+const
+    T = 100;
+
+type
+    TVetor = array[1..T] of Integer;
+
 var
+    Vet: TVetor;
+    Con, N, Base: Integer;
     Sair, Valido: Boolean;
     Co: Char;
 
 procedure ProcessarEntrada;
-var Frase: String;
-begin 
+var Equacao: String; 
+begin
     writeln;
-    write('Frase a ser invertida: ');
-    readln(Frase);
-    writeln(Inverter_Palavras(Frase));
+    write('Equação a ser validada: ');
+    readln(Equacao);
+    if Valida_Equacao(Equacao) then
+      writeln('A parentização está correta')
+    else
+    	writeln('A parentização está errada');
 end;
 
 procedure VerificarContinuidade;
@@ -36,7 +47,7 @@ begin
             end
         else
             writeln('Escreva um valor válido');
-        end;
+        end;             
     end;
 end;
 

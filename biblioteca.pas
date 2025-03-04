@@ -18,6 +18,7 @@ uses crt;
 	function tem_raiz(a,b,c: real): boolean;  
 	function posicao_ordenado(v: vetor;t,n: integer): integer;
 	function Inverter_Palavras(F: string): String;
+	function Valida_Equacao(E: string): boolean;
 	
 	procedure ler_inteiro(msg: string;n: integer);
 	procedure ler_real(msg: string;n: real);
@@ -34,6 +35,7 @@ uses crt;
 	 	
 	procedure iniciar(var c: integer);                                                              
 	procedure incluir_fila (var v: vetor;var c: integer;t: integer);
+	procedure incluir_fila_valor (var v: vetor;var c: integer;t,valor: integer);
 	procedure remover_fila (var v: vetor;var c: integer);
 	procedure consultar_fila (v: vetor;c: integer);
 	 
@@ -209,6 +211,32 @@ Implementation
 	  Inverter_Palavras := FraseInvertida;
 	end;
 	
+	function Valida_Equacao(E: string): boolean;
+	var	i, c: Integer;
+			v: boolean;
+	begin
+	  c := 0;
+	  i := 1;
+	  v := true;
+	  
+	  while (i <= Length(E)) and (v) do
+	  begin
+	  	if E[i] = '(' then
+	      c := c + 1
+	    else
+	    	if E[i] = ')' then
+	    	 begin
+	        c := c - 1;
+	        if c < 0 then
+	        	v := false;
+	       end;
+	    i := i + 1;
+	  end;
+	  if c <> 0 then
+	  	v := false;
+	  Valida_Equacao := v;
+	end;
+	
 //procedimentos		
 
   procedure ler_inteiro(msg: string;var n: integer);
@@ -317,6 +345,17 @@ Implementation
 		else
 		 begin
 		  ler_inteiro ('Qual valor?',valor);
+			v[c + 1] := valor;
+			c := c + 1;
+		 end; 					
+	end;
+	
+	procedure incluir_fila_valor (var v: vetor;var c: integer;t,valor: integer);
+	begin
+		if cheia(c,t) then
+			writeln ('Sua fila está cheia')
+		else
+		 begin
 			v[c + 1] := valor;
 			c := c + 1;
 		 end; 					
