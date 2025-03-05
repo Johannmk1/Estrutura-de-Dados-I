@@ -368,7 +368,7 @@ Implementation
 			writeln('Sua fila está vazia')
 		else
 		 begin
-		 	writeln('Removido Valor: ', v[1]); 
+//		 	writeln('Removido Valor: ', v[1]); 
 		  for i := 1 to c - 1 do
 				v[i] := v[i + 1];
 			v[c] := 0;
@@ -412,7 +412,7 @@ Implementation
 		var i: integer;
 	begin
 		if vazia(c) then
-			writeln('Sua pilha está vazia')
+//			writeln('Sua pilha está vazia')
 		else
 		 begin
 			c := c - 1;
