@@ -3,7 +3,7 @@ Interface
 
 uses crt;
 
-	type vetor = array[1..10000] of integer;
+	type vetor = array[1..10000] of integer; 
 			matriz = array[1..10000,1..10000] of integer;
 
   function cheia (c,t: integer): boolean;
@@ -20,6 +20,10 @@ uses crt;
 	function Inverter_Palavras(F: string): String;
 	function Valida_Equacao(E: string): boolean;
 	
+	function consultar_fila (v: vetor;c: integer): integer;
+	function consultar_pilha (v: vetor;c: integer): integer;
+	function consultar_lista (v: vetor;c,valor: integer): integer;
+		
 	procedure ler_inteiro(msg: string;n: integer);
 	procedure ler_real(msg: string;n: real);
 	procedure ler_vetor(var v: vetor;t: integer);
@@ -34,19 +38,14 @@ uses crt;
 	procedure gerar_matriz(var m: matriz;ql,qc,max: integer); //max = valor máximo que quer na matriz
 	 	
 	procedure iniciar(var c: integer);                                                              
-	procedure incluir_fila (var v: vetor;var c: integer;t: integer);
-	procedure incluir_fila_valor (var v: vetor;var c: integer;t,valor: integer);
+	procedure incluir_fila (var v: vetor;var c: integer;t,valor: integer);
 	procedure remover_fila (var v: vetor;var c: integer);
-	procedure consultar_fila (v: vetor;c: integer);
 	 
-	procedure incluir_pilha (var v: vetor;var c: integer;t: integer);
-	procedure incluir_pilha2 (var v: vetor;var c: integer;t,valor: integer);
+	procedure incluir_pilha (var v: vetor;var c: integer;t,valor: integer);
 	procedure remover_pilha (var v: vetor;var c: integer);
-	procedure consultar_pilha (v: vetor;c: integer);
 	
-	procedure incluir_lista (var v: vetor;var c: integer;t: integer);
-	procedure remover_lista (var v: vetor;var c: integer);
-	procedure consultar_lista (v: vetor;c: integer);
+	procedure incluir_lista (var v: vetor;var c: integer;t,valor: integer);
+	procedure remover_lista (var v: vetor;var c: integer;valor: integer);
 	
 	procedure converter_base (var v: vetor;var c: integer;t,num,base: integer);
 	 
@@ -54,6 +53,7 @@ uses crt;
   procedure uniao_vetor(v1,v2: vetor;t1,t2: integer;var u: vetor;var t: integer);
 	procedure interseccao_vetor(v1,v2: vetor;t1,t2: integer;var it: vetor;var t: integer);
 	procedure diferenca_vetor(v1,v2: vetor;t1,t2: integer;var d: vetor;var t: integer);
+	
 	procedure baskara(a,b,c: real; var x1,x2: real);
 // Tipo dos vetores e matrizes é 'vetor' e 'matriz'	
 
@@ -160,11 +160,11 @@ Implementation
 	end;
 	
 	function posicao_ordenado(v: vetor;t,n: integer): integer;
-	var inicio,fim,meio: integer;
-			posicao: integer;
+	var inicio,fim,meio,posicao: integer;
 	begin
 		inicio := 1;
 		fim := t;
+		posicao := 0;
 		while (inicio <= fim) and (posicao = 0) do
 		 begin
 			meio := (inicio + fim) div 2;
@@ -236,6 +236,30 @@ Implementation
 	  	v := false;
 	  Valida_Equacao := v;
 	end;
+		
+	function consultar_fila (v: vetor;c: integer): integer;
+	begin
+		if vazia(c) then
+			writeln('Sua fila está vazia')
+		else
+			consultar_fila := v[1];
+	end;	
+		
+	function consultar_pilha (v: vetor;c: integer): integer;
+	begin
+		if vazia(c) then
+			writeln('Sua pilha está vazia')
+		else
+			consultar_pilha := v[c];
+	end;
+		
+	function consultar_lista (v: vetor;c,valor: integer): integer;
+	begin
+		if vazia(c) then
+			consultar_lista := 0
+		else
+		  consultar_lista := posicao_ordenado(v,c,valor);
+	end;
 	
 //procedimentos		
 
@@ -243,7 +267,7 @@ Implementation
   begin
   	write(msg,' ');
   	readln(n);
-  end;
+  end;          
 
   procedure ler_real(msg: string;var n: real);
   begin
@@ -256,7 +280,7 @@ Implementation
 	begin
 	 	for i := 1 to t do
 	   begin
-	  	write('Digite o ',i,'º elemento: ');
+	  	write('Digite o ',i,'é elemento: ');
 			readln(v[i]);
 		 end;
 	end;
@@ -276,7 +300,7 @@ Implementation
 	var i: integer; 
 	begin
 	 	for i := 1 to t do
-	  	write(v[i]:3);
+	  	write(v[i]:5);
 	end;	
 	
 	procedure escrever_vetor_invertido(v: vetor;t: integer);
@@ -292,8 +316,10 @@ Implementation
 	 	for i := t downto 1 do
 	 	  if v[i] < 10 then
 	 	   	write(v[i]:3)
-	 	  else if v[i] = 10 then
-	 	  	write('A':3)
+	 	  else 
+			  write(chr(v[i]+56));
+			 //if v[i] = 10 then
+{	 	  	write('A':3)
 	 	  else if v[i] = 11 then
 	 	  	write('B':3)
 	 	  else if v[i] = 12 then
@@ -304,7 +330,7 @@ Implementation
 	 	  	write('E':3)
 	 	  else if v[i] = 15 then
 	 	  	write('F':3)
-	end;	
+}	end;	
 	 
 	procedure escrever_matriz(var m: matriz;ql,qc: integer);
 	var i,j: integer; 
@@ -337,20 +363,7 @@ Implementation
 		c := 0;	
 	end; 
 				
-	procedure incluir_fila (var v: vetor;var c: integer;t: integer);
-		var valor: integer;
-	begin
-		if cheia(c,t) then
-			writeln ('Sua fila está cheia')
-		else
-		 begin
-		  ler_inteiro ('Qual valor?',valor);
-			v[c + 1] := valor;
-			c := c + 1;
-		 end; 					
-	end;
-	
-	procedure incluir_fila_valor (var v: vetor;var c: integer;t,valor: integer);
+	procedure incluir_fila (var v: vetor;var c: integer;t,valor: integer);
 	begin
 		if cheia(c,t) then
 			writeln ('Sua fila está cheia')
@@ -368,39 +381,17 @@ Implementation
 			writeln('Sua fila está vazia')
 		else
 		 begin
-//		 	writeln('Removido Valor: ', v[1]); 
 		  for i := 1 to c - 1 do
 				v[i] := v[i + 1];
 			v[c] := 0;
 			c := c - 1;
 		 end;
 	end;
-	
-	procedure consultar_fila (v: vetor;c: integer);
-	begin
-		if vazia(c) then
-			writeln('Sua fila está vazia')
-		else
-			writeln('O seu primeiro valor é: ',v[1])
-	end;
 
-  procedure incluir_pilha (var v: vetor;var c: integer;t: integer);
-		var valor: integer;
+	procedure incluir_pilha (var v: vetor;var c: integer;t,valor: integer);
 	begin
 		if cheia(c,t) then
 			writeln ('Sua pilha está cheia')
-		else
-		 begin
-		  ler_inteiro ('Qual valor?',valor);
-			v[c + 1] := valor;
-			c := c + 1;
-		 end; 					
-	end;
-	
-	procedure incluir_pilha2 (var v: vetor;var c: integer;t,valor: integer);
-	begin
-		if cheia(c,t) then
-			writeln ('Overflow')
 		else
 		 begin
 			v[c + 1] := valor;
@@ -411,37 +402,23 @@ Implementation
 	procedure remover_pilha (var v: vetor;var c: integer);
 		var i: integer;
 	begin
-		if vazia(c) then
-//			writeln('Sua pilha está vazia')
-		else
-		 begin
+		if not vazia(c) then
 			c := c - 1;
-		 end;
 	end;                     
-	
-	procedure consultar_pilha (v: vetor;c: integer);
-	begin
-		if vazia(c) then
-			writeln('Sua pilha está vazia')
-		else
-			writeln('O seu primeiro valor é: ',v[c])
-	end;
 
-	procedure incluir_lista (var v: vetor;var c: integer;t: integer);
-		var valor,i,j: integer;
+	procedure incluir_lista (var v: vetor;var c: integer;t,valor: integer);
+		var i,j: integer;
 				acho: boolean;
 	begin
 		if cheia(c,t) then
 			writeln ('Sua fila está cheia')
 		else if vazia(c) then
 		 begin
-		  ler_inteiro ('Qual valor?',valor);
 		  v[1] := valor;
 		  c := c + 1;
 		 end	
 		else
 		 begin
-		  ler_inteiro ('Qual valor?',valor);
 		  if pertence_ordenado(v,c,valor) then
 		  	writeln(valor,' já pertence a lista'); 
 		  i := 1;
@@ -467,19 +444,14 @@ Implementation
 		 end; 					
 	end;
 	
-	procedure remover_lista (var v: vetor;var c: integer);
-		var i,posi,valor: integer;
+	procedure remover_lista (var v: vetor;var c: integer;valor: integer);
+		var i,posi: integer;
 	begin
-		if vazia(c) then
-			writeln('Sua fila está vazia')
-		else
+		if not vazia(c) then
 		 begin
-		  ler_inteiro ('Qual valor a ser removido?',valor);
 		  posi := posicao_ordenado(v,c,valor);
 		  if posi = 0 then          
-		  	writeln('O seu valor não pertence a lista')
-		  else
-			 	writeln('Removido Valor: ', v[posi]); 
+		  	writeln('O seu valor não pertence a lista');
 		  for i := posi to c - 1 do
 				v[i] := v[i + 1];
 			v[c] := 0;
@@ -487,29 +459,14 @@ Implementation
 		 end;
 	end;
 	
-	procedure consultar_lista (v: vetor;c: integer);
-	var valor: integer;
-	begin
-		if vazia(c) then
-			writeln('Sua lista está vazia')
-		else
-		 begin
-		  ler_inteiro ('Qual valor a ser consultado?',valor);
-		  if posicao_ordenado(v,c,valor) = 0 then
-		  	writeln('O seu valor não pertence a lista')
-		  else
-				writeln('O valor ',valor,' está na posição: ',posicao_ordenado(v,c,valor))
-		 end;
-	end;
-	
 	procedure converter_base (var v: vetor;var c: integer;t,num,base: integer);
 	begin
 		while num >= base do
 		 begin
-		  incluir_pilha2(v,c,t,num mod base);
+		  incluir_pilha(v,c,t,num mod base);
 		  num := num div base;
 		 end;
-	  incluir_pilha2(v,c,t,num);		
+	  incluir_pilha(v,c,t,num);		
 	end;
 		
 	procedure ordenar_vetor(var v:vetor;t:integer);
