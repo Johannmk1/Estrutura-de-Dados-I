@@ -5,6 +5,12 @@ uses crt;
 
 	type vetor = array[1..10000] of integer; 
 			matriz = array[1..10000,1..10000] of integer;
+			
+			TOb = record
+				vetor: array[1..10000] of integer;
+				count: integer;
+				tam: integer;
+			end;
 
   function cheia (c,t: integer): boolean;
   function vazia (c: integer): boolean;
@@ -23,6 +29,12 @@ uses crt;
 	function consultar_fila (v: vetor;c: integer): integer;
 	function consultar_pilha (v: vetor;c: integer): integer;
 	function consultar_lista (v: vetor;c,valor: integer): integer;
+	
+	function consultar_fila_d (F: TOb): integer;
+	function consultar_pilha_d (P: TOb): integer;
+	function consultar_lista_d (L: TOb;valor: integer): integer;
+	
+	function ler_int(msg: string): integer;
 		
 	procedure ler_inteiro(msg: string;n: integer);
 	procedure ler_real(msg: string;n: real);
@@ -30,6 +42,8 @@ uses crt;
 	procedure ler_matriz(var m: matriz;ql,qc: integer);
 	
 	procedure escrever_vetor(v: vetor;t: integer);
+	procedure escrever_vetor_d(F: TOb);
+	
 	procedure escrever_vetor_invertido(v: vetor;t: integer);
 	procedure escrever_pilha_hexa(v: vetor;t: integer);
   procedure escrever_matriz(var m: matriz;ql,qc: integer);
@@ -40,13 +54,22 @@ uses crt;
 	procedure iniciar(var c: integer);                                                              
 	procedure incluir_fila (var v: vetor;var c: integer;t,valor: integer);
 	procedure remover_fila (var v: vetor;var c: integer);
-	 
+	
 	procedure incluir_pilha (var v: vetor;var c: integer;t,valor: integer);
 	procedure remover_pilha (var v: vetor;var c: integer);
 	
 	procedure incluir_lista (var v: vetor;var c: integer;t,valor: integer);
 	procedure remover_lista (var v: vetor;var c: integer;valor: integer);
 	
+	procedure incluir_fila_d (var F: TOb; valor: integer);
+	procedure remover_fila_d (var F: TOb);
+	 
+	procedure incluir_pilha_d (var P: TOb;valor: integer);
+	procedure remover_pilha_d (var P: TOb);
+	
+	procedure incluir_lista_d (var L:TOb;valor: integer);
+	procedure remover_lista_d (var L: TOb;valor: integer);
+		
 	procedure converter_base (var v: vetor;var c: integer;t,num,base: integer);
 	 
 	procedure ordenar_vetor(var v:vetor;t:integer);
@@ -260,6 +283,38 @@ Implementation
 		else
 		  consultar_lista := posicao_ordenado(v,c,valor);
 	end;
+			
+	function consultar_fila_d (F: TOb): integer;
+	begin
+		if vazia(F.count) then
+			writeln('Sua fila está vazia')
+		else
+			consultar_fila_d := F.vetor[1];
+	end;
+	
+	function consultar_pilha_d (P: TOb): integer;
+	begin
+		if vazia(P.count) then
+			writeln('Sua pilha está vazia')
+		else
+			consultar_pilha_d := P.vetor[P.count];
+	end;
+		
+	function consultar_lista_d (L: TOb;valor: integer): integer;
+	begin
+		if vazia(L.count) then
+			consultar_lista_d := 0
+		else
+		  consultar_lista_d := posicao_ordenado(L.vetor,L.count,valor);
+	end;
+	
+	function ler_int(msg: string): integer;
+	var n: integer;
+  begin
+  	write(msg,' ');
+  	readln(n);
+  	ler_int := n;
+  end;   
 	
 //procedimentos		
 
@@ -302,6 +357,13 @@ Implementation
 	 	for i := 1 to t do
 	  	write(v[i]:5);
 	end;	
+	
+	procedure escrever_vetor_d(F: Tob);
+	var i: integer; 
+	begin
+	 	for i := 1 to F.count do
+	  	write(F.vetor[i]:5);
+	end;
 	
 	procedure escrever_vetor_invertido(v: vetor;t: integer);
 	var i: integer; 
@@ -387,7 +449,7 @@ Implementation
 			c := c - 1;
 		 end;
 	end;
-
+	
 	procedure incluir_pilha (var v: vetor;var c: integer;t,valor: integer);
 	begin
 		if cheia(c,t) then
@@ -404,8 +466,8 @@ Implementation
 	begin
 		if not vazia(c) then
 			c := c - 1;
-	end;                     
-
+	end;
+	
 	procedure incluir_lista (var v: vetor;var c: integer;t,valor: integer);
 		var i,j: integer;
 				acho: boolean;
@@ -456,6 +518,102 @@ Implementation
 				v[i] := v[i + 1];
 			v[c] := 0;
 			c := c - 1;
+		 end;
+	end;
+
+	procedure incluir_fila_d (var F: TOb; valor: integer);
+	begin
+		if cheia(F.count,F.tam) then
+			writeln ('Sua fila está cheia')
+		else
+		 begin
+			F.Vetor[F.count + 1] := valor;
+			F.count := F.count + 1;
+		 end; 					
+	end;
+	
+	procedure remover_fila_d (var F: TOb);
+		var i: integer;
+	begin
+		if vazia(F.count) then
+			writeln('Sua fila está vazia')
+		else
+		 begin
+		  for i := 1 to F.count - 1 do
+				F.Vetor[i] := F.Vetor[i + 1];
+			F.Vetor[F.count] := 0;
+			F.count := F.count - 1;
+		 end;
+	end;
+	
+	procedure incluir_pilha_d (var P: TOb;valor: integer);
+	begin
+		if cheia(P.count,P.tam) then
+			writeln ('Sua pilha está cheia')
+		else
+		 begin
+			P.vetor[P.count + 1] := valor;
+			P.count := P.count + 1;
+		 end; 					
+	end;
+
+	procedure remover_pilha_d (var P: TOb);
+		var i: integer;
+	begin
+		if not vazia(P.count) then
+			P.count := P.count - 1;
+	end;                     
+	
+	procedure incluir_lista_d (var L:TOb;valor: integer);
+		var i,j: integer;
+				acho: boolean;
+	begin
+		if cheia(L.count,L.tam) then
+			writeln ('Sua fila está cheia')
+		else if vazia(L.count) then
+		 begin
+		  L.vetor[1] := valor;
+		  L.count := L.count + 1;
+		 end	
+		else
+		 begin
+		  if pertence_ordenado(L.vetor,L.count,valor) then
+		  	writeln(valor,' já pertence a lista'); 
+		  i := 1;
+		  acho := false;
+		  while (i <= L.count) and (not acho) do
+		   begin
+		   	if valor < L.vetor[i] then
+		   	 begin
+		   		for j := L.count downto i do
+						L.vetor[j + 1] := L.vetor[j];
+					L.vetor[i] := valor;
+					L.count := L.count + 1;
+					acho := true; 
+				 end 
+		   	else		   	
+		   	 i := i + 1;
+		   end;
+		  if not acho then
+		   begin
+		    L.count := L.count + 1;
+		    L.vetor[L.count] := valor;
+		   end;
+		 end; 					
+	end;
+	
+	procedure remover_lista_d (var L: TOb;valor: integer);
+		var i,posi: integer;
+	begin
+		if not vazia(L.count) then
+		 begin
+		  posi := posicao_ordenado(L.vetor,L.count,valor);
+		  if posi = 0 then          
+		  	writeln('O seu valor não pertence a lista');
+		  for i := posi to L.count - 1 do
+				L.vetor[i] := L.vetor[i + 1];
+			L.vetor[L.count] := 0;
+			L.count := L.count - 1;
 		 end;
 	end;
 	
