@@ -35,6 +35,8 @@ uses crt;
 	function consultar_lista_d (L: TOb;valor: integer): integer;
 	
 	function ler_int(msg: string): integer;
+	
+	function Opcoes(frase: string; a,b,c,d,e: char): char;
 		
 	procedure ler_inteiro(msg: string;n: integer);
 	procedure ler_real(msg: string;n: real);
@@ -315,6 +317,29 @@ Implementation
   	readln(n);
   	ler_int := n;
   end;   
+
+	function Opcoes(frase: string; a,b,c,d,e: char): char;
+	var Valido: boolean;
+			Cod: char;
+	begin
+	  Valido := False;
+	  while not Valido do 
+	  begin
+	    writeln;
+			write(frase,'  ');
+	    readln(Cod);
+	    Cod := UpCase(Cod);
+	    
+	    if ((Cod = a) or (Cod = b) or (Cod = c) or (Cod = d) or (Cod = e)) AND (Cod <> ' ') then
+			begin
+	    	Opcoes := Cod;
+				Valido := True;
+			end
+	    else
+	       writeln('Escreva um valor válido');
+				              
+	  end;
+	end;
 	
 //procedimentos		
 
