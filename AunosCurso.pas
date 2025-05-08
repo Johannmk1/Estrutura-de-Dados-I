@@ -28,7 +28,7 @@ begin
   C := nil;
 end;
 
-procedure incluir_aluno(A: Ptaluno;nome: string);
+procedure incluir_aluno(var A: Ptaluno;nome: string);
 var novo, ant, atual: Ptaluno;
 begin
   New(novo);
@@ -44,7 +44,7 @@ begin
       ant := atual;
       atual := atual^.prox;
     end;
-    if ant = nil then //primeiro elemento
+    if ant = nil then //elemento primeira posicao
     begin
       novo^.prox := A;
       A := novo;

@@ -35,6 +35,7 @@ uses crt;
 	function consultar_lista_d (L: TOb;valor: integer): integer;
 	
 	function ler_int(msg: string): integer;
+	function ler_str(msg: string): string;
 	
 	function Opcoes(frase: string; a,b,c,d,e: char): char;
 		
@@ -316,6 +317,14 @@ Implementation
   	write(msg,' ');
   	readln(n);
   	ler_int := n;
+  end; 
+	
+	function ler_str(msg: string): string;
+	var s: string;
+  begin
+  	write(msg,' ');
+  	readln(s);
+  	ler_str := s;
   end;   
 
 	function Opcoes(frase: string; a,b,c,d,e: char): char;
