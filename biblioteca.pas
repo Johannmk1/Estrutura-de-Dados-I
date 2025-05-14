@@ -317,16 +317,16 @@ Implementation
   	write(msg,' ');
   	readln(n);
   	ler_int := n;
-  end; 
+  end;
 	
-	function ler_str(msg: string): string;
-	var s: string;
+	function ler_str(msg: string): string;   
+  var s: string;
   begin
   	write(msg,' ');
   	readln(s);
   	ler_str := s;
-  end;   
-
+  end;
+  
 	function Opcoes(frase: string; a,b,c,d,e: char): char;
 	var Valido: boolean;
 			Cod: char;
