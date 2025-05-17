@@ -1,4 +1,4 @@
-Program RegEncLista;
+Program AunosCursoDupEnc;
 
 uses biblioteca;
 
@@ -37,8 +37,59 @@ begin
   U := nil;
 end;
 
+procedure define_var_curso(C: Ptcurso; var ant,atual,prox: Ptcurso);
+begin
+  ant := nil; 
+  atual := C;
+  if atual <> nil then
+  	prox := atual^.prox
+  else 
+  	prox := nil;
+end;
+
+procedure define_var_aluno(A: Ptaluno; var ant,atual,prox: Ptaluno);
+begin
+  ant := nil; 
+  atual := A;
+  if atual <> nil then
+  	prox := atual^.prox
+  else 
+  	prox := nil;
+end;
+
+procedure andar_curso(var ant,atual,prox: Ptcurso);
+begin
+  ant := atual; 
+  atual := atual^.prox;
+  if atual <> nil then
+  	prox := atual^.prox
+  else 
+  	prox := nil;
+end;
+
+procedure andar_aluno(var ant,atual,prox: Ptaluno);
+begin
+  ant := atual; 
+  atual := atual^.prox;
+  if atual <> nil then
+  	prox := atual^.prox
+  else 
+  	prox := nil;
+end;
+
+procedure incluir_primeiro_aluno(var A,U: Ptaluno;nome: string);
+var novo: Ptaluno;
+begin
+	new(novo);				
+	novo^.nome := nome;
+	novo^.ant := nil;
+  novo^.prox := nil;
+  A := novo;
+  U := novo;
+end;
+
 procedure incluir_aluno(var A,U: Ptaluno;nome: string);
-var novo, ant, atual: Ptaluno;
+var novo, ant, atual, prox: Ptaluno;
 begin
   New(novo);
   if novo = nil then
@@ -46,19 +97,14 @@ begin
   else
   begin
     novo^.nome := nome;
-    ant := nil;
-    atual := A;
+    define_var_aluno(A,ant,atual,prox);
     while (atual <> nil) and (atual^.nome < nome) do //anda na lista
-    begin
-      ant := atual; 
-      atual := atual^.prox;
-    end;
+	    andar_aluno(ant,atual,prox);
     if ant = nil then //aluno primeira posição
     begin
       novo^.prox := A;
       novo^.ant := nil;
-		  if A <> nil then
-		    A^.ant := novo;
+		  A^.ant := novo;
       A := novo;
     end
     else if atual = nil then //adicionar na última posição
@@ -67,19 +113,18 @@ begin
       novo^.ant := ant;
       U := novo;
 		end
-    else //adicionar na lista em sua posicao
+    else //adicionar no meio da lista
     begin
       ant^.prox := novo;
       novo^.ant := ant;
       novo^.prox := atual;
-      if atual <> nil then
-      	atual^.ant := novo;
+      atual^.ant := novo;
 		end;
   end;
 end;
 
 procedure incluir(var C,U: Ptcurso; sig,alu: string);
-var novo, ant, atual: Ptcurso;
+var novo, ant, atual, prox: Ptcurso;
 begin
   New(novo);
   if novo = nil then
@@ -87,112 +132,109 @@ begin
   else
   begin
     novo^.sigla := sig;
-    ant := nil;
-    atual := C;
-    while (atual <> nil) and (atual^.sigla < sig) do //anda na lista cursos
-    begin
-      ant := atual;
-      atual := atual^.prox;
-    end;
-    if (ant = nil) and (atual^.sigla <> sig) then //curso primeira posição
-    begin
-    	if C = nil then //primeiro curso da lista
-    	begin
-    		C := novo;
-				U := novo;
-			end
-			else //curso primeira posição
-			begin		
-	      novo^.prox := C;
-	      novo^.ant := nil;
-			  if C <> nil then
-			    C^.ant := novo;      
-	      C := novo;
-	    end;
-      new(novo^.aluno); //primeiro aluno a ser inserido na lista
-			novo^.aluno^.nome := alu;
-			novo^.aluno^.ant := nil;
-      novo^.aluno^.prox := nil;
-      novo^.ultimo := novo^.aluno; 
-    end
-    else if atual^.sigla <> sig then //adicionar na lista em sua posicao (antes do atual)
-    begin
-    	ant^.prox := novo;
-	    novo^.ant := ant;
-    	if atual = nil then //insere no final
-	      U := novo
-	    else //insere no meio
+    if C = nil then //primeiro curso da lista
+  	begin
+  		C := novo;
+			U := novo;
+			novo^.ant := nil;
+			novo^.prox := nil;
+			new(novo^.aluno);
+			incluir_primeiro_aluno(novo^.aluno,novo^.ultimo,alu);	
+		end
+		else
+		begin
+	    define_var_curso(C,ant,atual,prox);
+	    while (atual <> nil) and (atual^.sigla < sig) do //anda na lista cursos
+		    andar_curso(ant,atual,prox);
+	    if atual^.sigla = sig then //ja existe o curso
+	    	incluir_aluno(atual^.aluno,atual^.ultimo,alu)
+			else if ant = nil then //curso primeira posição
 	    begin
+        novo^.prox := C;
+	      novo^.ant := nil;
+			  C^.ant := novo;      
+	      C := novo;
+	      new(novo^.aluno);
+	      incluir_primeiro_aluno(novo^.aluno,novo^.ultimo,alu);
+	    end 
+	    else if atual = nil then //insere no final
+	    begin
+		    novo^.prox := nil;
+		    novo^.ant := U;
+		    U^.prox := novo;
+				U := novo;
+				new(novo^.aluno);
+				incluir_primeiro_aluno(novo^.aluno,novo^.ultimo,alu);
+			end
+			else //adicionar no meio da lista (ant - novo - atual)
+	    begin
+	    	ant^.prox := novo;
+		    novo^.ant := ant;
 				novo^.prox := atual;
 				atual^.ant := novo;
-			end;	
-      new(novo^.aluno); //primeiro aluno a ser inserido na lista
-			novo^.aluno^.nome := alu;
-      novo^.aluno^.prox := novo^.ultimo;
-      novo^.ultimo^.ant := novo^.aluno;
-      novo^.aluno^.ant := nil; 
-    end
-		else //ja existe o curso
-    incluir_aluno(atual^.aluno,atual^.ultimo,alu);
+				new(novo^.aluno);
+				incluir_primeiro_aluno(novo^.aluno,novo^.ultimo,alu);
+			end;
+		end;	
   end;
 end;
 
 procedure escrever_curso(C: Ptcurso);
-var aux: Ptcurso;
+var atual: Ptcurso;
 begin
   if vaziac(C) then
     Writeln('Sua lista de cursos está vazia')
   else
   begin
     Write('Cursos: ');
-    aux := C;
-    while aux <> nil do
+    atual := C;
+    while atual <> nil do
     begin
-      Write(aux^.sigla:4);
-      aux := aux^.prox;
+      Write(atual^.sigla:4);
+      atual := atual^.prox;
     end;
     Writeln;
   end;
 end;
 
 procedure escrever_curso_invertido(U: Ptcurso);
-var cur: Ptcurso;
+var atual: Ptcurso;
 begin
   if vaziac(U) then
     Writeln('Sua lista de cursos está vazia')
   else
   begin
     Write('Cursos: ');
-    cur := U;
-    while cur <> nil do
+    atual := U;
+    while atual <> nil do
     begin
-      Write(cur^.sigla:4);
-      cur := cur^.ant;
+      Write(atual^.sigla:4);
+      atual := atual^.ant;
     end;
     Writeln;
   end;
 end;
 
 procedure escrever_aluno(C: Ptcurso);
-var aux: Ptcurso;
-		aux2: Ptaluno;
+var cur: Ptcurso;
+		alu: Ptaluno;
 begin
   if vaziac(C) then
     Writeln('Sua lista de cursos está vazia')
   else
   begin
     Writeln('Cursos/Alunos: ');
-    aux := C;
-    while aux <> nil do
+    cur := C;
+    while cur <> nil do
     begin
-      write(aux^.sigla:4,': '); //escreve curso
-      aux2 := aux^.aluno;
-	    while aux2 <> nil do
+      write(cur^.sigla:4,': '); //escreve curso
+      alu := cur^.aluno;
+	    while alu <> nil do
 	    begin
-	      Write(aux2^.nome:4,' '); //escreve aluno
-	      aux2 := aux2^.prox;
+	      Write(alu^.nome:4,' '); //escreve aluno
+	      alu := alu^.prox;
 	    end;
-      aux := aux^.prox;
+      cur := cur^.prox;
       writeln;
     end;
   end;
@@ -231,8 +273,7 @@ begin
     Writeln('Sua lista está vazia')
   else
   begin
-    atual := A;
-    ant := nil;
+    define_var_aluno(A,ant,atual,prox);
     achou := False;
     while (atual <> nil) and (not achou) do
     begin
@@ -240,22 +281,24 @@ begin
       begin
 				if ant = nil then //remove o primeiro
 				begin
-					if atual^.prox = nil then
+					if prox = nil then //remove unico aluno existente
 					begin
 						A := nil;
 						U := nil;
 					end
-					else
+					else //remove o primeiro
 					begin
-          	A := atual^.prox;
+          	A := prox;
           	A^.ant := nil;
         	end;
         end
-        else if atual^.prox = nil then //remove o ultimo
-        	U := ant	
+        else if prox = nil then //remove da ultima posição
+        begin
+        	U := ant;
+					U^.prox := nil;	
+        end
         else
         begin //Remove do meio
-          prox := atual^.prox;
 					ant^.prox := prox;
 	        prox^.ant := ant;
         end;
@@ -264,13 +307,10 @@ begin
 				achou := True;
       end
       else //anda na lista alunos
-      begin
-        ant := atual;
-        atual := atual^.prox;
-      end;
+	      andar_aluno(ant,atual,prox);
 		end;		
     if not achou then
-      Writeln('Aluno ', alu, ' não encontrado na lista');
+      Writeln('Aluno ', alu, ' não encontrado no curso ', sig);
   end;
 end;
 
@@ -282,8 +322,7 @@ begin
     Writeln('Sua lista está vazia')
   else
   begin
-    atual := C;
-    ant := nil;
+    define_var_curso(C,ant,atual,prox);
     achou := False;
     while (atual <> nil) and (not achou) do
     begin
@@ -294,22 +333,24 @@ begin
 				begin
 					if ant = nil then //remove o primeiro curso
 					begin
-						if atual^.prox = nil then
+						if prox = nil then //remove único curso existente
 						begin
 							C := nil;
 							U := nil;	
 						end
-						else
+						else //remove curso primeira posição
 						begin
-	          	C := atual^.prox;
+	          	C := prox;
 	          	C^.ant := nil;
 	          end;
 	        end
-	        else if atual^.prox = nil then //remove o último
-	        	U := ant
-	        else //remove do meio
+	        else if prox = nil then //remove o último curso
 	        begin
-	        	prox := atual^.prox;
+	        	U := ant;
+	        	U^.prox := nil;
+	        end
+					else //remove do meio
+	        begin
 	          ant^.prox := prox;  
 	          prox^.ant := ant;
 	        end;  
@@ -319,10 +360,7 @@ begin
 				achou := True;
       end
       else //anda na lista cursos
-      begin
-        ant := atual;
-        atual := atual^.prox;
-      end;
+        andar_curso(ant,atual,prox);
 		end;		
     if not achou then
       Writeln('Curso ', sig, ' não encontrado na lista');
