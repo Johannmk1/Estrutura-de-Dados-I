@@ -267,7 +267,7 @@ end;
 
 procedure escrever(C,U: Ptcurso);
 begin
-	writeln('Escrever: ');
+	write('Escrever: ');
 	case Opcoes('Cursos 1 | Cursos Invertido 2 | Alunos 3 | Alunos Invertido 4 ','1','2','3','4',' ') of
     '1': escrever_curso(C); 
 		'2': escrever_curso_invertido(U);                                  
