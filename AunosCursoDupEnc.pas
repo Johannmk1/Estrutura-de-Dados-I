@@ -265,6 +265,17 @@ begin
   end;
 end;
 
+procedure escrever(C,U: Ptcurso);
+begin
+	writeln('Escrever: ');
+	case Opcoes('Cursos 1 | Cursos Invertido 2 | Alunos 3 | Alunos Invertido 4 ','1','2','3','4',' ') of
+    '1': escrever_curso(C); 
+		'2': escrever_curso_invertido(U);                                  
+    '3': escrever_aluno(C);                                  
+    '4': escrever_aluno_invertido(U);                                         
+  end;
+end;
+
 procedure remover_aluno(var A,U: Ptaluno; sig,alu: string);
 var ant,atual,prox: Ptaluno;
 	  achou: boolean;
@@ -373,13 +384,14 @@ begin
   inicializar(curso,ultimo);
   sair := False;
   while not sair do
-    case Opcoes('Incluir I | Remover R | Escrever Curso C | Escrever Aluno A | Sair S ','I','R','C','A','S') of
+    case Opcoes('Incluir I | Remover R | Escrever E | Sair S ','I','R','E','S',' ') of
       'I': incluir(curso, ultimo, ler_str('De qual curso pertence? '), ler_str('Qual nome quer incluir? '));  
       'R': remover(curso, ultimo, ler_str('De qual curso pertence? '), ler_str('Qual nome quer remover? '));                                      
-//      'C': escrever_curso(curso);                                    
+			'E': escrever(curso,ultimo);
+//      'C': escrever_curso(curso);              Escrever Curso C | Escrever Aluno A |                      
 //      'A': escrever_aluno(curso); 
-			'C': escrever_curso_invertido(ultimo);                                    
-      'A': escrever_aluno_invertido(ultimo);                                     
+//			'C': escrever_curso_invertido(ultimo);                                    
+//      'A': escrever_aluno_invertido(ultimo);                                     
       'S': begin                                                 
              sair := True;
              Writeln;

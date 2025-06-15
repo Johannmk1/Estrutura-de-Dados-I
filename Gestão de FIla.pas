@@ -9,6 +9,7 @@ type TFila = record
 			rec: integer;
 			name: string;
 	 	 end;
+	 	 
 var Mono,Color,Plotter: TFila;
 		Sair: boolean; 
 
@@ -117,7 +118,7 @@ begin
 		writeln(F.fila[1]); 
 
 	writeln('Qtd Entrada: ',F.ent); 
-	writeln('Qtd Atendido: ',F.ate); 
+	writeln('Qtd Finalizada: ',F.ate); 
 	writeln('Qtd Recusado: ',F.rec); 
 	writeln('---------------------------');
 end;
